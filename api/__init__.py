@@ -1,23 +1,16 @@
-from flask import Flask
-from flask_restful import Resource, Api
+from flask import Flask, Blueprint
+from flask_restful import Api
 
+from api.resources.index import IndexView
+from api.resources.weather import WeatherCityListView, WeatherCityView
+
+# Create a Flask App instance
 app = Flask(__name__)
+
+# Create a Flask RESTful Api instance
 api = Api(app)
 
-class Index(Resource):
-    def get(self):
-        return {'greeting': 'Hello, DevGrid!'}
-
-class WeatherCityList(Resource):
-    def get(self):
-
-        cities = [{'name': 'Floripa'}, {'name': 'Natal'}]
-        return {'cities': cities}
-
-class WeatherCity(Resource):
-    def get(self, city_name):
-        return {'city': city_name}
-
-api.add_resource(Index, '/')
-api.add_resource(WeatherCityList, '/weather')
-api.add_resource(WeatherCity, '/weather/<string:city_name>')
+# Add Api endpoints
+api.add_resource(IndexView, '/', endpoint='index')
+api.add_resource(WeatherCityListView, '/weather', endpoint='weather_city_list')
+api.add_resource(WeatherCityView, '/weather/<string:city_name>', endpoint='weather_city')
