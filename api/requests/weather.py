@@ -7,17 +7,17 @@ def request_openweathermap(city_name):
     the request and the data.
     '''
 
-    BASE_URL = 'api.openweathermap.org/data/2.5/weather'
-    API_KEY = '3f62164f8ce1f8cb5ae8e2d02918babb'
+    OPENWEATHERMAP_BASE_URL = 'api.openweathermap.org/data/2.5/weather'
+    OPENWEATHERMAP_TOKEN = os.environ.get('OPENWEATHERMAP_TOKEN')
 
     payload = {
         'q': city_name,
-        'appid': API_KEY,
+        'appid': OPENWEATHERMAP_TOKEN,
         'units': 'metric',
     }
 
     try:
-        response = requests.get(f'https://{BASE_URL}', params=payload).json()
+        response = requests.get(f'https://{OPENWEATHERMAP_BASE_URL}', params=payload).json()
     except:
         return {'message': 'Connection to the OpenWeatherMap API service failed'}, 503
 
