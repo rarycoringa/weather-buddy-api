@@ -1,22 +1,31 @@
+from flask import request
 from flask_restful import Resource, reqparse
+
+from api.requests.weather import request_openweathermap
 
 class WeatherCityListView(Resource):
     def get(self):
 
-        parser = reqparse.RequestParser()
-        parser.add_argument(
-            'max',
-            type=int,
-            help='The \'max\' attribute must be a positive integer. Example: 4.'
-        )
+        max = request.args.get('max') if request.args.get('max') is not None else 5
 
-        args = parser.parse_args(strict=True)
+        try:
+            max = int(max)
 
-        max_number = args['max'] if args['max'] is not None else 5
+            if max <= 0:
+                raise Exception
+        except:
+            return {'message': 'The \'max\' attribute must be a positive integer greater than zero. Example: 4.'}, 400
 
-        cities = [{'name': 'Floripa'}, {'name': 'Natal'}]
-        return {'cities': cities}
+        cities = []
+
+        for i in range(0, max):
+            cities.append(request_openweathermap('London'))
+
+        return cities
 
 class WeatherCityView(Resource):
     def get(self, city_name):
-        return {'city': city_name}
+
+        response = request_openweathermap(city_name)
+
+        return response
