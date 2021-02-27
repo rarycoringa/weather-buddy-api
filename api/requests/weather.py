@@ -1,4 +1,4 @@
-import requests
+import os, requests
 
 def request_openweathermap(city_name):
     '''
