@@ -12,10 +12,10 @@ class WeatherCityListView(Resource):
         try:
             max = int(max)
 
-            if max <= 0:
+            if max <= 0 or max > 5:
                 raise Exception
         except:
-            return {'message': 'The \'max\' attribute must be a positive integer greater than zero. Example: 4.'}, 400
+            return {'message': 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4.'}, 400
 
         # Recover and manage the weather list in the cache
         weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
@@ -25,7 +25,6 @@ class WeatherCityListView(Resource):
 
         weather_list.reverse()
         recent_weather_list = weather_list[:max]
-
 
         return recent_weather_list, 200
 
