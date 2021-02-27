@@ -1,14 +1,20 @@
-from flask import Flask, Blueprint
+from flask import Flask
 from flask_restful import Api
+from flask_caching import Cache
 
-from api.resources.index import IndexView
-from api.resources.weather import WeatherCityListView, WeatherCityView
-
-# Create a Flask App instance
+# Create and configure Flask App instance
 app = Flask(__name__)
+
+# Create and configure Flask Cache instance
+cache = Cache(app, config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': 300})
+cache.init_app(app)
 
 # Create a Flask RESTful Api instance
 api = Api(app)
+
+# Import Api endpoints
+from api.resources.index import IndexView
+from api.resources.weather import WeatherCityListView, WeatherCityView
 
 # Add Api endpoints
 api.add_resource(IndexView, '/', endpoint='index')

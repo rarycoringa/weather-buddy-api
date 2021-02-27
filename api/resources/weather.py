@@ -1,11 +1,11 @@
 from flask import request
 from flask_restful import Resource, reqparse
-
 from api.requests.weather import request_openweathermap
+from api import cache
 
 class WeatherCityListView(Resource):
+    @cache.cached()
     def get(self):
-
         max = request.args.get('max') if request.args.get('max') is not None else 5
 
         try:
@@ -24,6 +24,7 @@ class WeatherCityListView(Resource):
         return cities
 
 class WeatherCityView(Resource):
+    @cache.cached()
     def get(self, city_name):
 
         response = request_openweathermap(city_name)

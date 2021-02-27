@@ -1,6 +1,12 @@
 import requests
 
 def request_openweathermap(city_name):
+    '''
+    Performs the request in the OpenWeatherMap API
+    using the city name (city_name) and validates
+    the request and the data.
+    '''
+
     BASE_URL = 'api.openweathermap.org/data/2.5/weather'
     API_KEY = '3f62164f8ce1f8cb5ae8e2d02918babb'
 
