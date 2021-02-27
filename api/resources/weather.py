@@ -1,13 +1,14 @@
 from flask import request
 from flask_restful import Resource, reqparse
-from api.requests.weather import request_openweathermap
 from api import cache
+from api.requests.weather import request_openweathermap
 
 class WeatherCityListView(Resource):
-    @cache.cached()
     def get(self):
+        # Get the maximum size list parameter of weather list
         max = request.args.get('max') if request.args.get('max') is not None else 5
 
+        # Validate the 'max' parameter (returns 400 if not an integer or less than or equal to zero)
         try:
             max = int(max)
 
@@ -16,17 +17,27 @@ class WeatherCityListView(Resource):
         except:
             return {'message': 'The \'max\' attribute must be a positive integer greater than zero. Example: 4.'}, 400
 
-        cities = []
+        # Recover and manage the weather list in the cache
+        weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
 
-        for i in range(0, max):
-            cities.append(request_openweathermap('London'))
+        if len(weather_list) == 0:
+            return {'message': 'Weather list not found'}, 404
 
-        return cities
+        weather_list.reverse()
+        recent_weather_list = weather_list[:max]
+
+
+        return recent_weather_list, 200
 
 class WeatherCityView(Resource):
     @cache.cached()
     def get(self, city_name):
+        # Request the weather in the specify city
+        weather = request_openweathermap(city_name)
 
-        response = request_openweathermap(city_name)
+        # Recover and update the weather list in the cache
+        weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
+        weather_list.append(weather)
+        cache.set('weather_list', weather_list)
 
-        return response
+        return weather, 200

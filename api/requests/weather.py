@@ -17,17 +17,17 @@ def request_openweathermap(city_name):
     }
 
     try:
-        json = requests.get(f'https://{BASE_URL}', params=payload).json()
+        response = requests.get(f'https://{BASE_URL}', params=payload).json()
     except:
-        return {'message': 'Connection to the openweathermap service failed'}, 503
+        return {'message': 'Connection to the OpenWeatherMap API service failed'}, 503
 
     try:
-        response = {
-            'city': json['name'],
-            'temp': json['main']['temp'],
-            'weather': json['weather'][0]['main']
+        weather = {
+            'city': response['name'],
+            'temp': response['main']['temp'],
+            'weather': response['weather'][0]['description'].title()
         }
     except:
-        return {'message': 'City not found'}, 404
+        return {'message': 'Weather not found'}, 404
 
-    return response
+    return weather
