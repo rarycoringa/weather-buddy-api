@@ -14,9 +14,9 @@ api = Api(app)
 
 # Import Api endpoints
 from api.resources.index import IndexView
-from api.resources.weather import WeatherCityListView, WeatherCityView
+from api.resources.weather import WeatherListView, WeatherView
 
 # Add Api endpoints
 api.add_resource(IndexView, '/', endpoint='index')
-api.add_resource(WeatherCityListView, '/weather', endpoint='weather_city_list')
-api.add_resource(WeatherCityView, '/weather/<string:city_name>', endpoint='weather_city')
+api.add_resource(WeatherListView, '/weather', endpoint='weather_list')
+api.add_resource(WeatherView, '/weather/<string:city_name>', endpoint='weather')
