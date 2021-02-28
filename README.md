@@ -2,8 +2,9 @@
 
 <img align="right" width="120" src="img/devgrid.png">
 
-![GitHub release](https://img.shields.io/github/v/release/rarygc/weather-buddy-api?include_prereleases)
-![GitHub license](https://img.shields.io/github/license/rarygc/weather-buddy-api)
+[![GitHub workflow status](https://img.shields.io/github/workflow/status/rarygc/weather-buddy-api/Flask%20CI?label=tests)](https://github.com/rarygc/weather-buddy-api/actions)
+[![GitHub release](https://img.shields.io/github/v/release/rarygc/weather-buddy-api?include_prereleases)](https://github.com/rarygc/weather-buddy-api/releases)
+[![GitHub license](https://img.shields.io/github/license/rarygc/weather-buddy-api)](https://github.com/rarygc/weather-buddy-api/blob/main/LICENSE)
 
 ## About this application
 
