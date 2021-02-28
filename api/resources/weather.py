@@ -3,7 +3,7 @@ from flask_restful import Resource, reqparse
 from api import cache
 from api.requests.weather import request_openweathermap
 
-class WeatherCityListView(Resource):
+class WeatherListView(Resource):
     def get(self):
         # Get the maximum size list parameter of weather list
         max = request.args.get('max') if request.args.get('max') is not None else 5
@@ -15,7 +15,7 @@ class WeatherCityListView(Resource):
             if max <= 0 or max > 5:
                 raise Exception
         except:
-            return {'message': 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4.'}, 400
+            return {'message': 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4'}, 400
 
         # Recover and manage the weather list in the cache
         weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
@@ -28,11 +28,17 @@ class WeatherCityListView(Resource):
 
         return recent_weather_list, 200
 
-class WeatherCityView(Resource):
+class WeatherView(Resource):
     @cache.cached()
     def get(self, city_name):
+
         # Request the weather in the specify city
         weather = request_openweathermap(city_name)
+
+        try:
+            city = weather['city']
+        except:
+            return weather[0], weather[1]
 
         # Recover and update the weather list in the cache
         weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
