@@ -7,6 +7,7 @@ name = "pypi"
 flask = "~=1.1"
 flask-restful = "~=0.3"
 flask-caching = "~=1.9"
+requests = "~=2.25"
 
 [dev-packages]
 pytest = "~=6.2"
