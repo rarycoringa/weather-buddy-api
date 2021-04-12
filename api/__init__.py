@@ -6,7 +6,7 @@ from flask_caching import Cache
 app = Flask(__name__)
 
 # Create and configure Flask Cache instance
-cache = Cache(app, config={'CACHE_TYPE': 'simple', 'CACHE_DEFAULT_TIMEOUT': 300})
+cache = Cache(app, config={'CACHE_TYPE': 'flask_caching.backends.SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 300})
 cache.init_app(app)
 
 # Create a Flask RESTful Api instance
