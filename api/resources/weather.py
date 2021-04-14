@@ -35,14 +35,9 @@ class WeatherView(Resource):
         # Request the weather in the specify city
         weather = request_openweathermap(city_name)
 
-        try:
-            city = weather['city']
-        except:
-            return weather[0], weather[1]
-
         # Recover and update the weather list in the cache
         weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
-        weather_list.append(weather)
+        weather_list.append(weather.to_primitive())
         cache.set('weather_list', weather_list)
 
-        return weather, 200
+        return weather.to_primitive(), 200
