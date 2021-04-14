@@ -26,6 +26,7 @@ class Weather(Model):
     max_temperature = FloatType()
     min_temperature = FloatType()
     wind = ModelType(Wind, required=True)
+    visibility = FloatType()
 
     class Options:
         serialize_when_none = False
