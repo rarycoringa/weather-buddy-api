@@ -1,5 +1,10 @@
 from schematics.models import Model
-from schematics.types import BaseType, FloatType, GeoPointType, ModelType, StringType
+from schematics.types import FloatType, GeoPointType, ModelType, StringType
+
+class PhysicalQuantity(Model):
+    value = FloatType(required=True)
+    unit = StringType(required=True)
+
 
 class City(Model):
     name = StringType(required=True)
@@ -9,23 +14,25 @@ class City(Model):
     class Options:
         serialize_when_none = False
 
+
 class Wind(Model):
-    speed = FloatType(required=True)
-    degree = FloatType(required=True)
+    speed = ModelType(PhysicalQuantity, required=True)
+    degree = ModelType(PhysicalQuantity, required=True)
 
     class Options:
         serialize_when_none = False
+
 
 class Weather(Model):
     city = ModelType(City, required=True)
     description = StringType(required=True)
     long_description = StringType(required=True)
-    temperature = FloatType(required=True)
-    feels_like = FloatType()
-    max_temperature = FloatType()
-    min_temperature = FloatType()
+    temperature = ModelType(PhysicalQuantity, required=True)
+    feels_like = ModelType(PhysicalQuantity)
+    max_temperature = ModelType(PhysicalQuantity)
+    min_temperature = ModelType(PhysicalQuantity)
     wind = ModelType(Wind, required=True)
-    visibility = FloatType()
+    visibility = ModelType(PhysicalQuantity)
 
     class Options:
         serialize_when_none = False
