@@ -12,7 +12,6 @@ class City(Model):
 class Wind(Model):
     speed = FloatType(required=True)
     degree = FloatType(required=True)
-    gust = FloatType(required=True)
 
     class Options:
         serialize_when_none = False
