@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource, reqparse
 from api import cache
 from api.requests.weather import request_openweathermap
+from api.models.weather import Weather
 
 class WeatherListView(Resource):
     def get(self):
@@ -36,8 +37,11 @@ class WeatherView(Resource):
         weather = request_openweathermap(city_name)
 
         # Recover and update the weather list in the cache
-        weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
-        weather_list.append(weather.to_primitive())
-        cache.set('weather_list', weather_list)
+        if isinstance(weather, Weather):
+            weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
+            weather_list.append(weather.to_primitive())
+            cache.set('weather_list', weather_list)
+        else:
+            return weather
 
         return weather.to_primitive(), 200
