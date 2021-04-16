@@ -1,93 +1,81 @@
 import os
-import tempfile
 import pytest
+import time
 
 from api import app
 
-@pytest.fixture
-def client():
+class TestIndexResource:
 
-    app.config['TESTING'] = True
+    def test_index_get(self, client):
 
-    with app.test_client() as client:
-        yield client
+        # Act
+        response = client.get('/')
 
-
-def test_index_get(client):
-
-    response = client.get('/')
-
-    assert response.status_code == 200
-    assert response.json['greeting'] == 'Hello, DevGrid!'
+        # Assert
+        assert response.status_code == 200
+        assert response.json['greeting'] == 'Hello, DevGrid!'
 
 
-def test_weather_list_empty_get(client):
+class TestWeatherResource:
 
-    response = client.get('/weather')
+    def test_weather_get(self, client):
 
-    assert response.status_code == 404
-    assert response.json['message'] == 'Weather list not found'
+        # Act
+        response = client.get('/weather/London')
 
-
-def test_weather_get(client):
-
-    response = client.get('/weather/Sao Paulo') # without accents
-
-    assert response.status_code == 200
-    assert response.json['city'] == 'São Paulo'
-    assert type(response.json['temp']) == float
-    assert type(response.json['weather']) == str
-
-    response = client.get('weather/london') # with lowercase letters
-
-    assert response.status_code == 200
-    assert response.json['city'] == 'London'
-    assert type(response.json['temp']) == float
-    assert type(response.json['weather']) == str
-
-    response = client.get('weather/lonfoodonbar') # with wrong city name
-
-    assert response.status_code == 404
-    assert response.json['message'] == 'Weather not found'
+        # Assert
+        assert response.status_code == 200
+        assert response.json['city']['name'] == 'London'
+        assert response.json['city']['country'] == 'GB'
+        assert type(response.json['city']['coordinates']) == list
 
 
-def test_weather_list_get(client):
+    def test_weather_not_found(self, client):
 
-    client.get('/weather/Toronto')
-    client.get('/weather/Amsterdam')
-    client.get('/weather/Berlin')
-    client.get('/weather/Oslo')
+        # Act
+        response = client.get('/weather/LondonFooBar')
 
-    response = client.get('/weather')
-
-    assert response.status_code == 200
-    assert len(response.json) == 5
-    assert response.json[0]['city'] == 'Oslo'
-    assert response.json[4]['city'] == 'London'
-
-    response = client.get('/weather?max=3')
-
-    assert len(response.json) == 3
+        # Assert
+        assert response.status_code == 404
+        assert response.json['message'] == 'Weather not found'
 
 
-def test_weather_list_with_invalid_params_get(client):
+class TestWeatherListResource:
 
-    response = client.get('/weather?max=-3')
+    def test_weather_list_get(self, client):
 
-    assert response.status_code == 400
-    assert response.json['message'] == 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4'
+        # Act
+        client.get('/weather/London')
+        client.get('/weather/Manchester')
 
-    response = client.get('/weather?max=0')
+        response = client.get('/weather')
 
-    assert response.status_code == 400
-    assert response.json['message'] == 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4'
+        # Assert
+        assert response.status_code == 200
+        assert type(response.json) == list
+        assert len(response.json) == 2
 
-    response = client.get('/weather?max=6')
 
-    assert response.status_code == 400
-    assert response.json['message'] == 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4'
+    def test_weather_list_empty_get(self, client):
 
-    response = client.get('/weather?max=foo')
+        # Act
+        response = client.get('/weather')
 
-    assert response.status_code == 400
-    assert response.json['message'] == 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4'
+        # Assert
+        assert response.status_code == 404
+        assert response.json['message'] == 'Weather list not found'
+
+
+    def test_weather_list_with_invalid_params_get(self, client):
+
+        # Act
+        response_list = []
+        response_list.append(client.get('/weather?max=-3'))
+        response_list.append(client.get('/weather?max=0'))
+        response_list.append(client.get('/weather?max=6'))
+        response_list.append(client.get('/weather?max=foo'))
+
+        # Assert
+        for response in response_list:
+            assert response.status_code == 400
+            assert response.json['message'] == 'The \'max\' attribute must be a positive integer between 1 and 5. Example: 4'
