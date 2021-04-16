@@ -62,6 +62,8 @@ def request_openweathermap(city_name):
                 'unit': 'meters'
             })
         })
+
+        weather.validate()
     except:
         return {'message': 'Weather not found'}, 404
 
