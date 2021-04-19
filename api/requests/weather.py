@@ -13,7 +13,7 @@ def request_openweathermap(city_name):
     payload = {
         'q': city_name,
         'appid': OPENWEATHERMAP_TOKEN,
-        'units': 'metric',
+        'units': 'standard',
     }
 
     try:
