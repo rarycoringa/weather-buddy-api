@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource, reqparse
 from api import cache
-from api.requests.weather import request_openweathermap
+from api import openweathermap as owm
 from api.models.weather import Weather
 
 class WeatherListView(Resource):
@@ -34,7 +34,8 @@ class WeatherView(Resource):
     def get(self, city_name):
 
         # Request the weather in the specify city
-        weather = request_openweathermap(city_name)
+        weather = owm.current_weather(city_name)
+
 
         # Recover and update the weather list in the cache
         if isinstance(weather, Weather):
@@ -44,4 +45,4 @@ class WeatherView(Resource):
         else:
             return weather
 
-        return weather.to_primitive(), 200
+        return weather.serialize(), 200
