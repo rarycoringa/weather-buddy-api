@@ -67,7 +67,10 @@ class OpenWeatherMap:
             if response.status_code != requests.codes.ok:
                 response.raise_for_status()
         except:
-            return {'message': 'Connection to the OpenWeatherMap API service failed'}, response.status_code
+            if response.status_code == requests.codes.not_found:
+                return {'message': 'Weather not found'}, response.status_code
+            else:
+                return {'message': 'Connection to the OpenWeatherMap API service failed'}, response.status_code
 
         weather = self.format_weather(response.json())
 

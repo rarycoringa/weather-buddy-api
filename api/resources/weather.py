@@ -34,15 +34,16 @@ class WeatherView(Resource):
     def get(self, city_name):
 
         # Request the weather in the specify city
-        weather = owm.current_weather(city_name)
+        response = owm.current_weather(city_name)
 
 
         # Recover and update the weather list in the cache
-        if isinstance(weather, Weather):
+        if isinstance(response, Weather):
+            weather = response
             weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
             weather_list.append(weather.to_primitive())
             cache.set('weather_list', weather_list)
         else:
-            return weather
+            return response
 
         return weather.serialize(), 200
