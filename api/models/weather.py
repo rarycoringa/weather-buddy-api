@@ -7,6 +7,7 @@ class PhysicalQuantity(Model):
     value = FloatType(required=True)
     unit = StringType(required=True)
 
+
 class Temperature(Model):
     value = FloatType(required=True)
 
@@ -46,6 +47,45 @@ class Temperature(Model):
         return unit.name.lower()
 
 
+class Distance(Model):
+    value = FloatType(required=True)
+
+    class DistanceMetrics(Enum):
+        METERS = 1
+        KILOMETERS = 2
+        MILES = 3
+
+    @serializable(type=FloatType, serialized_name='value')
+    def get_distance(self, *args, **kwargs):
+        if hasattr(self, 'context'):
+            distance = self.context.get('distance', 'meters')
+
+            if distance.upper() == self.DistanceMetrics.KILOMETERS.name:
+                value = round(self.value / 1000, 2) # Converts Meters distance to Kilometers
+            elif distance.upper() == self.DistanceMetrics.MILES.name:
+                value = round(self.value / 1609.344, 2) # Converts Meters distance to Miles
+            else:
+                value = round(self.value, 2) # Returns Meters distance
+        else:
+            value = round(self.value, 2) # Returns Meters distance
+        return value
+
+    @serializable(type=StringType, serialized_name='unit')
+    def get_unit(self, *args, **kwargs):
+        if hasattr(self, 'context'):
+            unit = self.context.get('distance', 'kelvin')
+
+            if unit.upper() == self.DistanceMetrics.KILOMETERS.name:
+                unit = self.DistanceMetrics.KILOMETERS
+            elif unit.upper() == self.DistanceMetrics.MILES.name:
+                unit = self.DistanceMetrics.MILES
+            else:
+                unit = self.DistanceMetrics.METERS
+        else:
+            unit = self.DistanceMetrics.METERS
+        return unit.name.lower()
+
+
 class City(Model):
     name = StringType(required=True)
     country = StringType()
@@ -72,7 +112,7 @@ class Weather(Model):
     max_temperature = ModelType(Temperature)
     min_temperature = ModelType(Temperature)
     wind = ModelType(Wind, required=True)
-    visibility = ModelType(PhysicalQuantity)
+    visibility = ModelType(Distance)
 
     class Options:
         serialize_when_none = False
