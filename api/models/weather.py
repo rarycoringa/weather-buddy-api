@@ -12,18 +12,18 @@ class Temperature(Model):
     value = FloatType(required=True)
 
     class TemperatureMetrics(Enum):
-        CELSIUS = 1
-        FAHRENHEIT = 2
-        KELVIN = 3
+        CELSIUS = 'celsius'
+        FAHRENHEIT = 'fahrenheit'
+        KELVIN = 'kelvin'
 
     @serializable(type=FloatType, serialized_name='value')
     def get_temperature(self, *args, **kwargs):
         if hasattr(self, 'context'):
             temperature = self.context.get('temperature', 'kelvin')
 
-            if temperature.upper() == self.TemperatureMetrics.CELSIUS.name:
+            if temperature.lower() == self.TemperatureMetrics.CELSIUS.value:
                 value = round(self.value - 273.0, 2) # Converts Kelvin temperature to Celsius
-            elif temperature.upper() == self.TemperatureMetrics.FAHRENHEIT.name:
+            elif temperature.lower() == self.TemperatureMetrics.FAHRENHEIT.value:
                 value = round(1.8*(self.value-273.0)+32.0, 2) # Converts Kelvin temperature to Fahrenheit
             else:
                 value = round(self.value, 2) # Returns Kelvin temperature
@@ -36,33 +36,33 @@ class Temperature(Model):
         if hasattr(self, 'context'):
             unit = self.context.get('temperature', 'kelvin')
 
-            if unit.upper() == self.TemperatureMetrics.CELSIUS.name:
+            if unit.lower() == self.TemperatureMetrics.CELSIUS.value:
                 unit = self.TemperatureMetrics.CELSIUS
-            elif unit.upper() == self.TemperatureMetrics.FAHRENHEIT.name:
+            elif unit.lower() == self.TemperatureMetrics.FAHRENHEIT.value:
                 unit = self.TemperatureMetrics.FAHRENHEIT
             else:
                 unit = self.TemperatureMetrics.KELVIN
         else:
             unit = self.TemperatureMetrics.KELVIN
-        return unit.name.lower()
+        return unit.value
 
 
 class Distance(Model):
     value = FloatType(required=True)
 
     class DistanceMetrics(Enum):
-        METERS = 1
-        KILOMETERS = 2
-        MILES = 3
+        METERS = 'meters'
+        KILOMETERS = 'kilometers'
+        MILES = 'miles'
 
     @serializable(type=FloatType, serialized_name='value')
     def get_distance(self, *args, **kwargs):
         if hasattr(self, 'context'):
             distance = self.context.get('distance', 'meters')
 
-            if distance.upper() == self.DistanceMetrics.KILOMETERS.name:
+            if distance.lower() == self.DistanceMetrics.KILOMETERS.value:
                 value = round(self.value / 1000, 2) # Converts Meters distance to Kilometers
-            elif distance.upper() == self.DistanceMetrics.MILES.name:
+            elif distance.lower() == self.DistanceMetrics.MILES.value:
                 value = round(self.value / 1609.344, 2) # Converts Meters distance to Miles
             else:
                 value = round(self.value, 2) # Returns Meters distance
@@ -73,17 +73,17 @@ class Distance(Model):
     @serializable(type=StringType, serialized_name='unit')
     def get_unit(self, *args, **kwargs):
         if hasattr(self, 'context'):
-            unit = self.context.get('distance', 'kelvin')
+            unit = self.context.get('distance', 'meters')
 
-            if unit.upper() == self.DistanceMetrics.KILOMETERS.name:
+            if unit.lower() == self.DistanceMetrics.KILOMETERS.value:
                 unit = self.DistanceMetrics.KILOMETERS
-            elif unit.upper() == self.DistanceMetrics.MILES.name:
+            elif unit.lower() == self.DistanceMetrics.MILES.value:
                 unit = self.DistanceMetrics.MILES
             else:
                 unit = self.DistanceMetrics.METERS
         else:
             unit = self.DistanceMetrics.METERS
-        return unit.name.lower()
+        return unit.value
 
 
 class City(Model):
