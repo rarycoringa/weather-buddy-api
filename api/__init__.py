@@ -18,6 +18,7 @@ cache = Cache(app,
 )
 
 cache.init_app(app)
+cache.set('weather_list', [])
 
 # Create a Flask RESTful Api instance
 api = Api(app)
