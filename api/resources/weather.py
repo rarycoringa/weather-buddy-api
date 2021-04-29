@@ -52,8 +52,10 @@ class WeatherView(Resource):
         else:
             # Requests a new weather with the OpenWeatherMap API
             response = owm.current_weather(city_name)
-            weather_list.append(response.to_primitive())
-            cache.set('weather_list', weather_list)
+
+            if isinstance(response, Weather):
+                weather_list.append(response.to_primitive())
+                cache.set('weather_list', weather_list)
 
         # Creates the context of the units of measurement
         if isinstance(response, Weather):
