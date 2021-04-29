@@ -38,10 +38,13 @@ class WeatherView(Resource):
 
         weather_cached = None
 
-        for weather in weather_list:
-            # Gets the weather in cache if exists
-            if unidecode(city_name.upper()) == weather['id']:
-                weather_cached = weather
+        if weather_list is not None:
+            for weather in weather_list:
+                # Gets the weather in cache if exists
+                if unidecode(city_name.upper()) == weather['id']:
+                    weather_cached = weather
+        else:
+            weather_list = []
 
         if weather_cached is not None:
             # Instances an existing weather in cache
