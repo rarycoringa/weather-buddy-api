@@ -1,6 +1,7 @@
 from schematics.models import Model
 from schematics.types import FloatType, GeoPointType, ModelType, StringType
 from schematics.types.serializable import serializable
+from unidecode import unidecode
 from api.utils.metatypes import EnumMeta
 
 class PhysicalQuantity(Model):
@@ -116,3 +117,7 @@ class Weather(Model):
 
     class Options:
         serialize_when_none = False
+
+    @serializable(type=StringType, serialized_name='id')
+    def id(self):
+        return unidecode(f'{self.city.name.upper()}')
