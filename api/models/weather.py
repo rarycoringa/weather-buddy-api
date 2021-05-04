@@ -76,9 +76,9 @@ class Distance(Model):
         if hasattr(self, 'context'):
             unit = self.context.get('distance', 'meters')
 
-            if unit.lower() == self.DistanceMetrics.KILOMETERS:
+            if unit.upper() == self.DistanceMetrics.KILOMETERS:
                 unit = self.DistanceMetrics.KILOMETERS
-            elif unit.lower() == self.DistanceMetrics.MILES:
+            elif unit.upper() == self.DistanceMetrics.MILES:
                 unit = self.DistanceMetrics.MILES
             else:
                 unit = self.DistanceMetrics.METERS
