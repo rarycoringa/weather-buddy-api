@@ -9,6 +9,7 @@ flask-restful = "~=0.3"
 flask-caching = "~=1.10"
 requests = "~=2.25"
 schematics = "~=2.1"
+unidecode = "~=1.2"
 
 [dev-packages]
 pytest = "~=6.2"

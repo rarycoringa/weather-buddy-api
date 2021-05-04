@@ -1,5 +1,5 @@
 import os, requests
-from api.models.weather import PhysicalQuantity, City, Wind, Weather
+from api.models.weather import PhysicalQuantity, Temperature, Distance, City, Wind, Weather
 
 class OpenWeatherMap:
 
@@ -23,21 +23,17 @@ class OpenWeatherMap:
             }),
             'description': response['weather'][0]['main'].title(),
             'long_description': response['weather'][0]['description'].title(),
-            'temperature': PhysicalQuantity({
-                'value': float(response['main']['temp']),
-                'unit': 'celsius degree'
+            'temperature': Temperature({
+                'value': float(response['main']['temp'])
             }),
-            'feels_like': PhysicalQuantity({
-                'value': float(response['main']['feels_like']),
-                'unit': 'celsius degree'
+            'feels_like': Temperature({
+                'value': float(response['main']['feels_like'])
             }) if response['main']['feels_like'] != response['main']['temp'] else None,
-            'max_temperature': PhysicalQuantity({
-                'value': float(response['main']['temp_max']),
-                'unit': 'celsius degree'
+            'max_temperature': Temperature({
+                'value': float(response['main']['temp_max'])
             }) if response['main']['temp_max'] != response['main']['temp'] else None,
-            'min_temperature': PhysicalQuantity({
-                'value': float(response['main']['temp_min']),
-                'unit': 'celsius degree'
+            'min_temperature': Temperature({
+                'value': float(response['main']['temp_min'])
             }) if response['main']['temp_min'] != response['main']['temp'] else None,
             'wind': Wind({
                 'speed': PhysicalQuantity({
@@ -49,9 +45,8 @@ class OpenWeatherMap:
                     'unit': 'degrees'
                 })
             }),
-            'visibility': PhysicalQuantity({
-                'value': float(response['visibility']),
-                'unit': 'meters'
+            'visibility': Distance({
+                'value': float(response['visibility'])
             })
         })
 

@@ -1,5 +1,6 @@
 from flask import request
 from flask_restful import Resource, reqparse
+from unidecode import unidecode
 from api import cache
 from api import openweathermap as owm
 from api.models.weather import Weather
@@ -30,20 +31,52 @@ class WeatherListView(Resource):
         return recent_weather_list, 200
 
 class WeatherView(Resource):
-    @cache.cached()
     def get(self, city_name):
 
-        # Request the weather in the specify city
-        response = owm.current_weather(city_name)
+        # Recovers the cached weather list
+        weather_list = cache.get('weather_list')
 
+        weather_cached = None
 
-        # Recover and update the weather list in the cache
+        if weather_list is not None:
+            for weather in weather_list:
+                # Gets the weather in cache if exists
+                if unidecode(city_name.upper()) == weather['id']:
+                    weather_cached = weather
+        else:
+            weather_list = []
+
+        if weather_cached is not None:
+            # Instances an existing weather in cache
+            response = Weather(weather_cached)
+        else:
+            # Requests a new weather with the OpenWeatherMap API
+            response = owm.current_weather(city_name)
+
+            if isinstance(response, Weather):
+                weather_list.append(response.to_primitive())
+                cache.set('weather_list', weather_list)
+
+        # Creates the context of the units of measurement
         if isinstance(response, Weather):
             weather = response
-            weather_list = cache.get('weather_list') if cache.get('weather_list') is not None else []
-            weather_list.append(weather.to_primitive())
-            cache.set('weather_list', weather_list)
+
+            # Creates the temperature context
+            temperature = request.args.get('temperature', 'kelvin')
+            temperature_context = {'temperature': temperature}
+            weather.temperature.context = temperature_context
+            if weather.feels_like is not None:
+                weather.feels_like.context = temperature_context
+            if weather.max_temperature is not None:
+                weather.max_temperature.context = temperature_context
+            if weather.min_temperature is not None:
+                weather.min_temperature.context = temperature_context
+
+            # Creates the distance context
+            distance = request.args.get('distance', 'meters')
+            distance_context = {'distance': distance}
+            weather.visibility.context = distance_context
         else:
             return response
 
-        return weather.serialize(), 200
+        return weather.to_primitive(), 200
